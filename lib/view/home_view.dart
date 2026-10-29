@@ -4,8 +4,6 @@ import 'package:get_it/get_it.dart';
 
 import '../controller/tarefa_controller.dart';
 
-
-
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
@@ -343,40 +341,6 @@ class _HomeViewState extends State<HomeView> {
                         fontSize: 12,
                       ),
                     ),
-
-                  IconButton(
-                    tooltip: 'Editar tarefa',
-                    onPressed: ctrl.carregando
-                        ? null
-                        : () {
-                            _abrirDialogEditar(
-                              tarefaId: documento.id,
-                              titulo: titulo,
-                              descricao: descricao,
-                              concluida: concluida,
-                            );
-                          },
-                    icon: const Icon(
-                      Icons.edit_outlined,
-                      color: _corPrincipal,
-                    ),
-                  ),
-
-                  IconButton(
-                    tooltip: 'Excluir tarefa',
-                    onPressed: ctrl.carregando
-                        ? null
-                        : () {
-                            _confirmarExclusao(
-                              tarefaId: documento.id,
-                              titulo: titulo,
-                            );
-                          },
-                    icon: const Icon(
-                      Icons.delete_outline,
-                      color: Colors.red,
-                    ),
-                  ),
                 ],
               ),
             ),
