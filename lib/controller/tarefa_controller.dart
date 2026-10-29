@@ -105,10 +105,10 @@ class TarefaController extends ChangeNotifier {
           'usuarioId',
           isEqualTo: usuario.uid,
         )
-        .orderBy(
-          'criadoEm',
-          descending: true,
-        )
+        // .orderBy(
+        //   'criadoEm',
+        //   descending: true,
+        // )
         .snapshots();
   }
 
