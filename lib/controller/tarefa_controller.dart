@@ -6,8 +6,8 @@ class TarefaController extends ChangeNotifier {
   TarefaController({
     FirebaseFirestore? firestore,
     FirebaseAuth? firebaseAuth,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
+  }) : _firestore = firestore ?? FirebaseFirestore.instance,
+       _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
 
   final FirebaseFirestore _firestore;
   final FirebaseAuth _firebaseAuth;
@@ -26,13 +26,11 @@ class TarefaController extends ChangeNotifier {
 
   String? get usuarioId => _firebaseAuth.currentUser?.uid;
 
-  CollectionReference<Map<String, dynamic>>
-      get _tarefasCollection {
+  CollectionReference<Map<String, dynamic>> get _tarefasCollection {
     return _firestore.collection('tarefas');
   }
 
-  CollectionReference<Map<String, dynamic>>
-      get _usuariosCollection {
+  CollectionReference<Map<String, dynamic>> get _usuariosCollection {
     return _firestore.collection('usuarios');
   }
 
@@ -50,12 +48,10 @@ class TarefaController extends ChangeNotifier {
     }
 
     try {
-      final DocumentSnapshot<Map<String, dynamic>>
-          documentoUsuario =
+      final DocumentSnapshot<Map<String, dynamic>> documentoUsuario =
           await _usuariosCollection.doc(usuario.uid).get();
 
-      final Map<String, dynamic>? dados =
-          documentoUsuario.data();
+      final Map<String, dynamic>? dados = documentoUsuario.data();
 
       final String nomeFirestore =
           dados?['nomeCompleto']?.toString().trim() ?? '';
@@ -72,17 +68,13 @@ class TarefaController extends ChangeNotifier {
         'Erro ao carregar usuário: ${erro.code}',
       );
 
-      _nomeUsuario = usuario.displayName ??
-          usuario.email ??
-          'Usuário';
+      _nomeUsuario = usuario.displayName ?? usuario.email ?? 'Usuário';
     } catch (erro) {
       debugPrint(
         'Erro inesperado ao carregar usuário: $erro',
       );
 
-      _nomeUsuario = usuario.displayName ??
-          usuario.email ??
-          'Usuário';
+      _nomeUsuario = usuario.displayName ?? usuario.email ?? 'Usuário';
     }
 
     notifyListeners();
@@ -96,8 +88,7 @@ class TarefaController extends ChangeNotifier {
     final User? usuario = _firebaseAuth.currentUser;
 
     if (usuario == null) {
-      return const Stream<
-          QuerySnapshot<Map<String, dynamic>>>.empty();
+      return const Stream<QuerySnapshot<Map<String, dynamic>>>.empty();
     }
 
     return _tarefasCollection
@@ -105,10 +96,6 @@ class TarefaController extends ChangeNotifier {
           'usuarioId',
           isEqualTo: usuario.uid,
         )
-        // .orderBy(
-        //   'criadoEm',
-        //   descending: true,
-        // )
         .snapshots();
   }
 
@@ -125,8 +112,7 @@ class TarefaController extends ChangeNotifier {
     _mensagemErro = null;
 
     if (usuario == null) {
-      _mensagemErro =
-          'Nenhum usuário autenticado foi encontrado.';
+      _mensagemErro = 'Nenhum usuário autenticado foi encontrado.';
       notifyListeners();
       return false;
     }
@@ -134,8 +120,7 @@ class TarefaController extends ChangeNotifier {
     final String tituloTratado = titulo.trim();
     final String descricaoTratada = descricao.trim();
 
-    final String? erroTitulo =
-        validarTitulo(tituloTratado);
+    final String? erroTitulo = validarTitulo(tituloTratado);
 
     if (erroTitulo != null) {
       _mensagemErro = erroTitulo;
@@ -143,8 +128,7 @@ class TarefaController extends ChangeNotifier {
       return false;
     }
 
-    final String? erroDescricao =
-        validarDescricao(descricaoTratada);
+    final String? erroDescricao = validarDescricao(descricaoTratada);
 
     if (erroDescricao != null) {
       _mensagemErro = erroDescricao;
@@ -173,8 +157,7 @@ class TarefaController extends ChangeNotifier {
       _mensagemErro = _traduzirErroFirestore(erro);
       return false;
     } catch (erro) {
-      _mensagemErro =
-          'Não foi possível adicionar a tarefa.';
+      _mensagemErro = 'Não foi possível adicionar a tarefa.';
       return false;
     } finally {
       _alterarCarregamento(false);
@@ -196,15 +179,13 @@ class TarefaController extends ChangeNotifier {
     _mensagemErro = null;
 
     if (usuario == null) {
-      _mensagemErro =
-          'Nenhum usuário autenticado foi encontrado.';
+      _mensagemErro = 'Nenhum usuário autenticado foi encontrado.';
       notifyListeners();
       return false;
     }
 
     if (tarefaId.trim().isEmpty) {
-      _mensagemErro =
-          'Não foi possível identificar a tarefa.';
+      _mensagemErro = 'Não foi possível identificar a tarefa.';
       notifyListeners();
       return false;
     }
@@ -212,8 +193,7 @@ class TarefaController extends ChangeNotifier {
     final String tituloTratado = titulo.trim();
     final String descricaoTratada = descricao.trim();
 
-    final String? erroTitulo =
-        validarTitulo(tituloTratado);
+    final String? erroTitulo = validarTitulo(tituloTratado);
 
     if (erroTitulo != null) {
       _mensagemErro = erroTitulo;
@@ -221,8 +201,7 @@ class TarefaController extends ChangeNotifier {
       return false;
     }
 
-    final String? erroDescricao =
-        validarDescricao(descricaoTratada);
+    final String? erroDescricao = validarDescricao(descricaoTratada);
 
     if (erroDescricao != null) {
       _mensagemErro = erroDescricao;
@@ -233,25 +212,21 @@ class TarefaController extends ChangeNotifier {
     _alterarCarregamento(true);
 
     try {
-      final DocumentReference<Map<String, dynamic>>
-          referencia =
+      final DocumentReference<Map<String, dynamic>> referencia =
           _tarefasCollection.doc(tarefaId);
 
-      final DocumentSnapshot<Map<String, dynamic>>
-          documento =
-          await referencia.get();
+      final DocumentSnapshot<Map<String, dynamic>> documento = await referencia
+          .get();
 
       if (!documento.exists) {
         _mensagemErro = 'A tarefa não foi encontrada.';
         return false;
       }
 
-      final Map<String, dynamic>? dados =
-          documento.data();
+      final Map<String, dynamic>? dados = documento.data();
 
       if (dados?['usuarioId'] != usuario.uid) {
-        _mensagemErro =
-            'Você não possui permissão para editar esta tarefa.';
+        _mensagemErro = 'Você não possui permissão para editar esta tarefa.';
         return false;
       }
 
@@ -268,8 +243,7 @@ class TarefaController extends ChangeNotifier {
       _mensagemErro = _traduzirErroFirestore(erro);
       return false;
     } catch (erro) {
-      _mensagemErro =
-          'Não foi possível editar a tarefa.';
+      _mensagemErro = 'Não foi possível editar a tarefa.';
       return false;
     } finally {
       _alterarCarregamento(false);
@@ -289,20 +263,17 @@ class TarefaController extends ChangeNotifier {
     _mensagemErro = null;
 
     if (usuario == null) {
-      _mensagemErro =
-          'Nenhum usuário autenticado foi encontrado.';
+      _mensagemErro = 'Nenhum usuário autenticado foi encontrado.';
       notifyListeners();
       return false;
     }
 
     try {
-      final DocumentReference<Map<String, dynamic>>
-          referencia =
+      final DocumentReference<Map<String, dynamic>> referencia =
           _tarefasCollection.doc(tarefaId);
 
-      final DocumentSnapshot<Map<String, dynamic>>
-          documento =
-          await referencia.get();
+      final DocumentSnapshot<Map<String, dynamic>> documento = await referencia
+          .get();
 
       if (!documento.exists) {
         _mensagemErro = 'A tarefa não foi encontrada.';
@@ -310,12 +281,10 @@ class TarefaController extends ChangeNotifier {
         return false;
       }
 
-      final Map<String, dynamic>? dados =
-          documento.data();
+      final Map<String, dynamic>? dados = documento.data();
 
       if (dados?['usuarioId'] != usuario.uid) {
-        _mensagemErro =
-            'Você não possui permissão para alterar esta tarefa.';
+        _mensagemErro = 'Você não possui permissão para alterar esta tarefa.';
         notifyListeners();
         return false;
       }
@@ -332,8 +301,7 @@ class TarefaController extends ChangeNotifier {
       notifyListeners();
       return false;
     } catch (erro) {
-      _mensagemErro =
-          'Não foi possível alterar a situação da tarefa.';
+      _mensagemErro = 'Não foi possível alterar a situação da tarefa.';
       notifyListeners();
       return false;
     }
@@ -351,15 +319,13 @@ class TarefaController extends ChangeNotifier {
     _mensagemErro = null;
 
     if (usuario == null) {
-      _mensagemErro =
-          'Nenhum usuário autenticado foi encontrado.';
+      _mensagemErro = 'Nenhum usuário autenticado foi encontrado.';
       notifyListeners();
       return false;
     }
 
     if (tarefaId.trim().isEmpty) {
-      _mensagemErro =
-          'Não foi possível identificar a tarefa.';
+      _mensagemErro = 'Não foi possível identificar a tarefa.';
       notifyListeners();
       return false;
     }
@@ -367,25 +333,21 @@ class TarefaController extends ChangeNotifier {
     _alterarCarregamento(true);
 
     try {
-      final DocumentReference<Map<String, dynamic>>
-          referencia =
+      final DocumentReference<Map<String, dynamic>> referencia =
           _tarefasCollection.doc(tarefaId);
 
-      final DocumentSnapshot<Map<String, dynamic>>
-          documento =
-          await referencia.get();
+      final DocumentSnapshot<Map<String, dynamic>> documento = await referencia
+          .get();
 
       if (!documento.exists) {
         _mensagemErro = 'A tarefa não foi encontrada.';
         return false;
       }
 
-      final Map<String, dynamic>? dados =
-          documento.data();
+      final Map<String, dynamic>? dados = documento.data();
 
       if (dados?['usuarioId'] != usuario.uid) {
-        _mensagemErro =
-            'Você não possui permissão para excluir esta tarefa.';
+        _mensagemErro = 'Você não possui permissão para excluir esta tarefa.';
         return false;
       }
 
@@ -397,8 +359,7 @@ class TarefaController extends ChangeNotifier {
       _mensagemErro = _traduzirErroFirestore(erro);
       return false;
     } catch (erro) {
-      _mensagemErro =
-          'Não foi possível excluir a tarefa.';
+      _mensagemErro = 'Não foi possível excluir a tarefa.';
       return false;
     } finally {
       _alterarCarregamento(false);
@@ -421,13 +382,11 @@ class TarefaController extends ChangeNotifier {
 
       return true;
     } on FirebaseAuthException catch (erro) {
-      _mensagemErro = erro.message ??
-          'Não foi possível encerrar a sessão.';
+      _mensagemErro = erro.message ?? 'Não foi possível encerrar a sessão.';
 
       return false;
     } catch (erro) {
-      _mensagemErro =
-          'Não foi possível encerrar a sessão.';
+      _mensagemErro = 'Não foi possível encerrar a sessão.';
 
       return false;
     } finally {
@@ -517,8 +476,7 @@ class TarefaController extends ChangeNotifier {
         return 'A consulta necessita de um índice no Firestore.';
 
       default:
-        return erro.message ??
-            'Não foi possível realizar a operação.';
+        return erro.message ?? 'Não foi possível realizar a operação.';
     }
   }
 }
